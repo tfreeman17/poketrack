@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PokéTrack</title>
+	<script
+		src="https://code.jquery.com/jquery-3.1.0.min.js"
+		integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="
+		crossorigin="anonymous"
+	></script>
+	<script>
+//  this is where we want to render our map and filters
+
+	function showAllPokemon() {
+		console.log("showing Pokemon");
+		$.get('/json/sightings', function(data){
+			$('#output').html("");
+				for (var i = 0; i < data.length; i++) {
+					$('#output').append('<p>' + data[i].pokemonId +" is at " +data[i].locStr + '</p>');
+				}
+			}, 'json'
+		);
+	}
+
+	function sendPokemon() {
+		console.log("sending Pokemon");
+		$.post(
+			'/json/sightings',
+			{
+				locStr: $('#locStr').val(),
+				pokemonId: $('#pokemonId').val()
+			},
+			function(data){
+				if (data == "success") {
+					showAllPokemon();
+				}
+			}
+		);
+	}
+
+	function logout(){
+		$.get('/api/logout', function(data){
+		document.location = "/";
+		});
+	}
+
+
+//  this is where we want to render our map and filters
+
+	$(document).ready(function() {
+		showAllPokemon();
+		console.log($("#submit"))
+		$('#submit').click(sendPokemon);
+	});
+		$(document).ready(function() {
+		showAllPokemon();
+		console.log($("#logout"))
+		$('#logout').click(logout);
+	});
+
+setInterval(showAllPokemon, 60000);
+
+	</script>
+</head>
+<body>
+	<input type="text" id="locStr">
+	<input type="text" id="pokemonId">
+	<input type="button" id="submit" value="Send Loc">
+	<input type="button" id="logout" value="Logout">
+	<div id="output"></div>
+</body>
+</html>
